@@ -41,7 +41,10 @@ export default function Navbar() {
       {user && (
         <>
           <Link href="/profilo" style={{ marginRight: 15 }}>Profilo</Link>
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>
+  Logout
+</button>
+
         </>
       )}
     </nav>

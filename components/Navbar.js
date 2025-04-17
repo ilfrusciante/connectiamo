@@ -8,7 +8,20 @@ export default function Navbar() {
   const router = useRouter();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+    getUser();
+
+    // Ascolta cambiamenti login/logout
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -19,8 +32,12 @@ export default function Navbar() {
   return (
     <nav style={{ padding: 10, borderBottom: '1px solid #ccc' }}>
       <Link href="/" style={{ marginRight: 15 }}>Home</Link>
-      <Link href="/signup" style={{ marginRight: 15 }}>Registrati</Link>
-      <Link href="/login" style={{ marginRight: 15 }}>Login</Link>
+      {!user && (
+        <>
+          <Link href="/signup" style={{ marginRight: 15 }}>Registrati</Link>
+          <Link href="/login" style={{ marginRight: 15 }}>Login</Link>
+        </>
+      )}
       {user && (
         <>
           <Link href="/profilo" style={{ marginRight: 15 }}>Profilo</Link>
